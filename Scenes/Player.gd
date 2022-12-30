@@ -1,13 +1,21 @@
 extends KinematicBody2D
 
-export(float) var SPEED = 100
+export(int) var SPEED = 100
 
 onready var sprite = $Sprite
+onready var animationTree = $AnimationTree
+onready var stateMachine = animationTree.get("parameters/playback")
 
 func _physics_process(delta):
 	var input_xy = getPlayerInput()
 	
 	var velocity = move_and_slide(input_xy * SPEED)
+	
+	if (velocity == Vector2.ZERO):
+		stateMachine.call_deferred("idle")
+	else:
+		stateMachine.call_deferred("run")
+	
 	setFlipDirection(velocity)
 	
 	
